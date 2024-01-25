@@ -7,7 +7,7 @@ L.Geoserver = L.FeatureGroup.extend({
     CQL_FILTER: "INCLUDE",
     zIndex: 1000,
     version: "",
-    srsname: "EPSG:4326",
+    srsname: "EPSG:26191",
     attribution: 'layer',
     fitLayer: true,
     style: "",
@@ -119,7 +119,7 @@ L.Geoserver = L.FeatureGroup.extend({
     const legend = L.control({ position: "bottomleft" });
     legend.onAdd = (map) => {
       const div = L.DomUtil.create("div", "info Legend");
-      const url = `${that.baseLayerUrl}/wms?REQUEST=GetLegendGraphic&VERSION=${that.options.version}&FORMAT=image/png&LAYER=${that.options.layers}&style=${that.options.style}`;
+      const url = `${that.baseLayerUrl}/wms?REQUEST=GetLegendGraphic&VERSION=${that.options.version}&FORMAT=image/png&LAYER=${that.options.layers}&style=${that.options.style}&legend_options=fontAntiAliasing:true;dpi:120;`;
       div.innerHTML +=
         "<img src=" +
         url +
