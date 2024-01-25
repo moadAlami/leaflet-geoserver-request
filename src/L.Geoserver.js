@@ -8,10 +8,10 @@ L.Geoserver = L.FeatureGroup.extend({
     zIndex: 1000,
     version: "",
     srsname: "EPSG:4326",
-    attribution: `layer`,
+    attribution: 'layer',
     fitLayer: true,
     style: "",
-    onEachFeature: function (feature, layer) {},
+    onEachFeature: (feature, layer) => {},
     wmsLayers: [],
     wmsCQL_FILTER: [],
     wmsStyle: [],
@@ -45,7 +45,7 @@ L.Geoserver = L.FeatureGroup.extend({
   //wfs layer fetching function
   //Note this function will work only for vector layer
   wfs: function () {
-    var that = this;
+    const that = this;
 
     if (!this.options.version) {
       this.options.version = '1.1.0';
@@ -67,12 +67,12 @@ L.Geoserver = L.FeatureGroup.extend({
 
       dataType: "jsonp",
       jsonpCallback: "getJson",
-      success: function (data) {
-        var layers = [];
+      success: (data) => {
+        const layers = [];
 
         // push all the layers to the layers array
-        for (var i = 0; i < data.features.length; i++) {
-          var layer = L.GeoJSON.geometryToLayer(
+        for (let i = 0; i < data.features.length; i++) {
+          const layer = L.GeoJSON.geometryToLayer(
             data.features[i],
             that.options || null
           );
@@ -106,7 +106,7 @@ L.Geoserver = L.FeatureGroup.extend({
           that._map.fitBounds(that.getBounds());
         }
       },
-    }).fail(function (jqXHR, textStatus, error) {
+    }).fail((jqXHR, textStatus, error) => {
       console.log(jqXHR, textStatus, error);
     });
 
@@ -115,11 +115,11 @@ L.Geoserver = L.FeatureGroup.extend({
 
   //Legend of the map
   legend: function () {
-    var that = this;
-    var legend = L.control({ position: "bottomleft" });
-    legend.onAdd = function (map) {
-      var div = L.DomUtil.create("div", "info Legend");
-      var url = `${that.baseLayerUrl}/wms?REQUEST=GetLegendGraphic&VERSION=${that.options.version}&FORMAT=image/png&LAYER=${that.options.layers}&style=${that.options.style}`;
+    const that = this;
+    const legend = L.control({ position: "bottomleft" });
+    legend.onAdd = (map) => {
+      const div = L.DomUtil.create("div", "info Legend");
+      const url = `${that.baseLayerUrl}/wms?REQUEST=GetLegendGraphic&VERSION=${that.options.version}&FORMAT=image/png&LAYER=${that.options.layers}&style=${that.options.style}`;
       div.innerHTML +=
         "<img src=" +
         url +
@@ -131,12 +131,12 @@ L.Geoserver = L.FeatureGroup.extend({
 
   //This function is used for zooming the raster layer using specific vector data
   wmsImage: function () {
-    var that = this;
+    const that = this;
     $.ajax({
       url: `${that.baseLayerUrl}/ows?service=WFS&version=${that.options.version}&request=GetFeature&cql_filter=${that.options.wmsCQL_FILTER[0]}&typeName=${that.options.wmsLayers[0]}&srsName=EPSG:4326&maxFeatures=50&outputFormat=text%2Fjavascript`,
       dataType: "jsonp",
       jsonpCallback: "parseResponse",
-      success: function (data) {
+      success: (data) => {
         // bounding box for the selected vector layer
         selectedArea = L.geoJson(data);
         bboxX1 = selectedArea.getBounds()._southWest.lng;
@@ -147,14 +147,14 @@ L.Geoserver = L.FeatureGroup.extend({
         bufferBbox = Math.min((bboxX2 - bboxX1) * 0.1, (bboxY2 - bboxY1) * 0.1);
         maxValue = Math.max(bboxX2 - bboxX1, bboxY2 - bboxY1) / 2.0;
 
-        var otherLayers = "";
-        var otherStyle = "";
-        var otherCqlFilter = "";
-        for (var i = 1; i < that.options.wmsLayers.length; i++) {
+        let otherLayers = "";
+        let otherStyle = "";
+        let otherCqlFilter = "";
+        for (let i = 1; i < that.options.wmsLayers.length; i++) {
           otherLayers += that.options.wmsLayers[i];
           otherStyle += that.options.wmsStyle[i];
           otherCqlFilter += that.options.wmsCQL_FILTER[i];
-          if (i != that.options.wmsLayers.length - 1) {
+          if (i !== that.options.wmsLayers.length - 1) {
             otherLayers += ",";
             otherStyle += ",";
             otherCqlFilter += ";";
@@ -162,7 +162,7 @@ L.Geoserver = L.FeatureGroup.extend({
         }
 
         //final wmsLayerUrl
-        var wmsLayerURL = `${
+        const wmsLayerURL = `${
           that.baseLayerUrl
         }/wms?service=WMS&version=1.3.0&request=GetMap&\
 layers=${otherLayers}&\
@@ -185,22 +185,22 @@ format=image/png`;
   },
 });
 
-L.Geoserver.wms = function (baseLayerUrl, options) {
-  var req = new L.Geoserver(baseLayerUrl, options);
+L.Geoserver.wms = (baseLayerUrl, options) => {
+  const req = new L.Geoserver(baseLayerUrl, options);
   return req.wms();
 };
 
-L.Geoserver.wfs = function (baseLayerUrl, options) {
-  var req = new L.Geoserver(baseLayerUrl, options);
+L.Geoserver.wfs = (baseLayerUrl, options) => {
+  const req = new L.Geoserver(baseLayerUrl, options);
   return req.wfs();
 };
 
-L.Geoserver.legend = function (baseLayerUrl, options) {
-  var req = new L.Geoserver(baseLayerUrl, options);
+L.Geoserver.legend = (baseLayerUrl, options) => {
+  const req = new L.Geoserver(baseLayerUrl, options);
   return req.legend();
 };
 
-L.Geoserver.wmsImage = function (baseLayerUrl, options) {
-  var req = new L.Geoserver(baseLayerUrl, options);
+L.Geoserver.wmsImage = (baseLayerUrl, options) => {
+  const req = new L.Geoserver(baseLayerUrl, options);
   return req.wmsImage();
 };
